@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/MasterPageUsuario}">
+
+<head>
+    <title>CARGA MASIVA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+
+</head>
+
+<body>
+    <div layout:fragment="main">
+        <br>
+        <div class="container-fluid">
+            <div class="text-center" id="divBtnTypeInputFile">
+                <button class="btn btn-warning" onclick="CargaInicial()">CARGA MASIVA</button>
+            </div>
+
+            <div class="row justify-content-center" id="divTypeInputFile" hidden>
+                <div class="text-center col-md-5">
+                    <h4 id="tituloTxt">SELECCIONA EL TIPO DE ARCHIVO</h4>
+                    <br>
+                    <div>
+                        <button class="btn btn-info" onclick="TypeFileTXT()">TXT</button>
+                        <button class="btn btn-secondary" onclick="TypeFileCSV()">EXCEL</button>
+                    </div>
+                </div>
+
+                <form th:action="@{/cargaMasiva}" id="cargaMasivaForm" method="post" enctype="multipart/form-data">
+                    <div class="row justify-content-center" id="divInputFile" hidden>
+                        <div class="text-center col-md-3">
+                            <br>
+                            <input class="form-control " type="file" id="inputFile" name="inputFile">
+                        </div>
+                    </div>
+                    <div class="row justify-content-center" id="divBtnSubirFile" hidden>
+                        <div class="text-center col-md-3">
+                            <br>
+                            <button class="btn btn-success" type="file" id="btnSubirFile"
+                                onclick="ValidarFile(event)">SUBIR
+                                ARCHIVO</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <br>
+            <br>
+            <div th:if="${erroresExcel != null}" class="container" id="errorsExcelDivTable">
+                <div class="row">
+                    <div class="form-group col-md-12  col-sm-12 ">
+                        <h2 class="text-center">"EXISTEN ERRORES EN TU ARRCHIVO"</h2>
+                        <table class="align-middle table table-bordered table-striped table-hover border border-dark">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Fila</th>
+                                    <th>Errores</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="errorExcel : ${erroresExcel}">
+                                    <td class="text-center" th:text="${errorExcel.row}"></td>
+                                    <td th:text="${errorExcel.errorMessage}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+<script layout:fragment="script">
+    function CargaInicial() {
+        $("#divTypeInputFile").removeAttr("hidden");
+        $('#divBtnTypeInputFile').attr("hidden", true);
+        $("#errorsExcelDivTable").attr("hidden", true);
+    }
+
+    function TypeFileCSV() {
+        $("#divInputFile").removeAttr("hidden");
+        $("#divBtnSubirFile").removeAttr("hidden");
+        $("#inputFile").attr("accept", ".xlsx");
+        $("#tituloTxt").text('Ingresa un archivo ".xlsx"');
+    }
+    function TypeFileTXT() {
+        $("#divInputFile").removeAttr("hidden");
+        $("#divBtnSubirFile").removeAttr("hidden");
+        $("#inputFile").attr("accept", ".txt");
+        $("#tituloTxt").text('Ingresa un archivo ".txt"');
+    }
+
+    function ValidarFile(event) {
+
+        var form = document.getElementById('cargaMasivaForm');
+
+        var fileInput = $("#inputFile")[0];
+        var fileInputAll = $("#inputFile");
+        var filePath = fileInput.value;
+        var extensionFile = fileInputAll.attr('accept').replace(/\./g, '');
+        if (fileInput.files.length > 0) {
+            var file = fileInput.files[0];
+            var fileName = file.name;
+            var fileExtension = fileName.split('.').pop().toLowerCase();
+            if (fileExtension === extensionFile) {
+                alert('Archivo valido');
+
+                form.action = "/cargaMasiva/" + extensionFile;
+            } else {
+                // form.method = 'get';
+                fileInputAll.val = '';
+                event.preventDefault();
+                alert('Archivo invalido');
+            }
+        } else {
+            // form.method = 'get';
+            fileInputAll.val = '';
+            event.preventDefault();
+            alert('Ingresa un archivo :((')
+        }
+
+
+    }
+
+
+    $(function () {
+        $("#tableErroresExcel").dataTable();
+    });
+</script>
+
+</html>

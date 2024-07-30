@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html lang=”es” xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/MasterPageUsuario}">
+
+<head>
+    <title>USUARIOS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/main.css}">
+
+</head>
+
+<body>
+
+    <div layout:fragment="main">
+        <div class="container" style="background-color: cyan">
+            <hr>
+            <div class="container text-center">
+                <h2>Buscar usuario</h2>
+            </div>
+            <br>
+            <form method="post" th:object="${usuarioBusqueda}">
+    <div class="row">
+        <div class="form-group col-md-3 col-sm-6 mb-3">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-person-circle"></i>
+                </span>
+                <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre..."
+                    th:field="*{Nombre}">
+            </div>
+        </div>
+        <div class="form-group col-md-3 col-sm-6 mb-3">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-person-circle"></i>
+                </span>
+                <input type="text" class="form-control" id="apellidoPaterno"
+                    placeholder="Ingrese el apellido paterno..." th:field="*{ApellidoPaterno}">
+            </div>
+        </div>
+        <div class="form-group col-md-3 col-sm-6 mb-3">
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="bi bi-person-circle"></i>
+                </span>
+                <input type="text" class="form-control" id="apellidoMaterno"
+                    placeholder="Ingrese el apellido materno..." th:field="*{ApellidoMaterno}">
+            </div>
+        </div>
+        <div class="form-group col-md-3 col-sm-6 mb-3">
+            <div class="input-group">
+                <input type="submit" class="btn btn-success w-100" value="BUSCAR USUARIO">
+            </div>
+        </div>
+    </div>
+</form>
+
+            <br>
+            <hr>
+        </div>
+
+        <div class="container text-center">
+            <h3>USUARIOS</h3>
+        </div>
+        <br>
+        <div class="container text-center">
+            <a type="button" class="btn btn-success " th:href="@{/usuario/form/{idUsuario} (idUsuario = 0)}">REGISTRAR
+                USUARIO</a>
+        </div>
+        <br />
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover border border-dark" id="tableUsuario">
+                            <thead class="text-center">
+                                <tr>
+                                    <th>Editar</th>
+                                    <th>Imagen</th>
+                                    <th>Datos personales</th>
+                                    <th>Rol</th>
+                                    <th>Dirección</th>
+                                    <th>Datos de contacto</th>
+                                    <th>Eliminar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="usuarioDirreccion : ${usuariosDireccion}">
+                                    <td class="text-center align-middle">
+                                        <a class="btn btn-warning"
+                                            th:href="@{/usuario/form/{IdUsuario}(IdUsuario = ${usuarioDirreccion.Usuario.IdUsuario})}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <img th:if="${usuarioDirreccion.Usuario.Imagen != null}"
+                                            th:src="'data:image/png;base64,'+ ${usuarioDirreccion.Usuario.Imagen}"
+                                            style="max-height: 100px; max-width: 100%;">
+                                        <img th:unless="${usuarioDirreccion.Usuario.Imagen != null}"
+                                            src="/img/userDefault.png" style="max-height: 100px; max-width: 100%;">
+                                    </td>
+                                    <td th:utext="${'Nombre: '+usuarioDirreccion.Usuario.Nombre+' '+usuarioDirreccion.Usuario.ApellidoPaterno+' '+usuarioDirreccion.Usuario.ApellidoMaterno + '<br>Fecha nacimiento: '+usuarioDirreccion.Usuario.FechaNacimiento+'<br> CURP: '+usuarioDirreccion.Usuario.CURP+'<br>Sexo: '+usuarioDirreccion.Usuario.Sexo}">
+                                    </td>
+                                    <td th:utext="${usuarioDirreccion.Usuario.Rol.Nombre}">
+                                    </td>
+                                    <td th:if="${usuarioDirreccion.Direccion != null}"
+                                        th:utext="${usuarioDirreccion.Direccion.Calle+', NumInt: '+usuarioDirreccion.Direccion.NumeroInterior+', NumExt: '+usuarioDirreccion.Direccion.NumeroExterior+', '+usuarioDirreccion.Direccion.Colonia.Nombre+', CP: '+usuarioDirreccion.Direccion.Colonia.CodigoPostal+ ', <br>'+usuarioDirreccion.Direccion.Colonia.Municipio.Nombre+', '+usuarioDirreccion.Direccion.Colonia.Municipio.Estado.Nombre+', '+usuarioDirreccion.Direccion.Colonia.Municipio.Estado.Pais.Nombre}">
+                                    </td>
+                                    <td th:unless="${usuarioDirreccion.Direccion != null}" class="text-center">Sin datos de dirección
+                                    </td>
+                                    <td th:utext="${'Nombre de usuario: '+usuarioDirreccion.Usuario.UserName+'<br>Email: '+usuarioDirreccion.Usuario.Email+'<br>Password: '+usuarioDirreccion.Usuario.Password+'<br> Teléfono: '+usuarioDirreccion.Usuario.Telefono+'<br>Celular: '+usuarioDirreccion.Usuario.Celular}">
+                                    </td>
+                                    <td class="text-center align-middle">
+                                        <a class="btn btn-danger"
+                                            th:href="@{/usuario/eliminar/{IdUsuario}(IdUsuario = ${usuarioDirreccion.Usuario.IdUsuario})}">
+                                            <i class="bi bi-trash3"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br>
+    </div>
+    
+</body>
+
+
+<script layout:fragment="script">
+    $(function () {
+        $("#tableUsuario").dataTable();
+    });
+</script>
+
+</html>

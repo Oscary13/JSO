@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <title>LOGIN</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+</head>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <!-- <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section">Login #05</h2>
+                </div>
+            </div> -->
+            <div class="row justify-content-center">
+                <div class="col-md-7 col-lg-5">
+                    <div class="wrap">
+                        <div class="img" style="background-image: url(/img/bg-1.jpg);"></div>
+                        <div class="login-wrap p-4 p-md-5">
+                            <div class="d-flex">
+                                <div class="w-100">
+                                    <h6 class="mb-4">INICIAR SESIÓN</h6>
+                                </div>
+                                <div class="w-100">
+                                    <p class="social-media d-flex justify-content-end">
+                                        <a class="social-icon d-flex align-items-center justify-content-center"><span
+                                                class="fa fa-facebook"></span></a>
+                                        <a class="social-icon d-flex align-items-center justify-content-center"><span
+                                                class="fa fa-twitter"></span></a>
+                                    </p>
+                                </div>
+                            </div>
+                            <form id="formLogin">
+                                <!-- th:action="@{/login/iniciare}" class="signin-form" th:object="${usuario}" method="post" -->
+
+                                <div class="form-group mt-3">
+                                    <!-- <input type="text" class="form-control" required th:field="*{email}"> -->
+                                    <input type="text" class="form-control" required id="inputEmailUsuarios">
+                                    <label class="form-control-placeholder" for="username">Correo electronico</label>
+                                </div>
+                                <div class="form-group mt-5">
+                                    <!-- <input id="password-field" type="password" class="form-control" required th:field="*{password}"> -->
+                                    <input id="inputPasswordUsuarios" type="password" class="form-control" required>
+                                    <label class="form-control-placeholder" for="password">Contraseña</label>
+                                    <span toggle="#inputPasswordUsuarios"
+                                        class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit"
+                                        class="form-control btn btn-primary rounded submit px-3">Iniciar</button>
+                                    <!-- </div>
+                                <div class="form-group d-md-flex">
+                                    <div class="w-50 text-left">
+                                        <label class="checkbox-wrap checkbox-primary mb-0">Remember Me
+                                            <input type="checkbox" checked>
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <div class="w-50 text-md-right">
+                                        <a href="#">Forgot Password</a>
+                                    </div>
+                                </div> -->
+                            </form>
+                            
+                            <p class="text-center mt-3 text-danger" id="pErrorValidation"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        (function ($) {
+
+            "use strict";
+
+            $(".toggle-password").click(function () {
+
+                $(this).toggleClass("fa-eye fa-eye-slash");
+                var input = $($(this).attr("toggle"));
+                if (input.attr("type") == "password") {
+                    input.attr("type", "text");
+                } else {
+                    input.attr("type", "password");
+                }
+            });
+
+        })(jQuery);
+
+        $(document).ready(function () {
+            $('#formLogin').on('submit', function (event) {
+                $('#pErrorValidation').empty();
+                event.preventDefault();
+                const email = $('#inputEmailUsuarios').val();
+                const password = $('#inputPasswordUsuarios').val();
+                var data = {
+                    "email": email,
+                    "password": password
+                };
+
+                $.ajax({
+                    url: "http://localhost:8081/login/validation",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function (usuario) {
+                        alert('Bienvenido: '+usuario.object.nombre+' '+usuario.object.apellidoPaterno+' '+usuario.object.apellidoMaterno);
+                        window.location.href ='http://localhost:8082/usuario';
+                    },
+                    error: function () {
+                        $('#pErrorValidation').text('¡Los datos ingresados son incorrectos!');
+                    }
+                });
+
+            });
+        });
+
+
+
+
+
+    </script>
+    <script defer
+        src="https://static.cloudflareinsights.com/beacon.min.js/vef91dfe02fce4ee0ad053f6de4f175db1715022073587"
+        integrity="sha512-sDIX0kl85v1Cl5tu4WGLZCpH/dV9OHbA4YlKCuCiMmOQIk4buzoYDZSFj+TvC71mOBLh8CDC/REgE0GX0xcbjA=="
+        data-cf-beacon='{"rayId":"88c0deedee662b77","version":"2024.4.1","token":"cd0b4b3a733644fc843ef0b185f98241"}'
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+.circulo{
+    width: 200px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+    /* top: 50%;
+    left: 50%;
+    transform:translate(-50,-50); */
+
+}
+
+.aDiv{
+    background-image: url(img/userO.png);
+}
+
+.circulo img{
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.colorBackground{
+    background-color: #998986;
+}

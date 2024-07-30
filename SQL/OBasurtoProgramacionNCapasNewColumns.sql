@@ -1,0 +1,34 @@
+ALTER TABLE Usuario MODIFY UserName NOT NULL;
+ALTER TABLE Usuario ADD CONSTRAINT uniqueUserName UNIQUE (UserName);
+
+
+ALTER TABLE Usuario MODIFY Nombre NOT NULL;
+
+ALTER TABLE Usuario RENAME COLUMN Apellido TO ApellidoPaterno;
+ALTER TABLE Usuario MODIFY ApellidoPaterno NOT NULL;
+
+ALTER TABLE Usuario ADD ApellidoMaterno VARCHAR(50) NULL;
+
+ALTER TABLE Usuario ADD (Email VARCHAR(254));
+UPDATE Usuario SET Email ='Email_'||TO_CHAR(ROWNUM);COMMIT;
+ALTER TABLE Usuario MODIFY (Email NOT NULL);
+ALTER TABLE Usuario ADD CONSTRAINT uniqueEmail UNIQUE (Email);
+
+
+ALTER TABLE Usuario ADD (Password VARCHAR(50));
+UPDATE Usuario SET Password ='password_'||TO_CHAR(ROWNUM);COMMIT;
+ALTER TABLE Usuario MODIFY (Password NOT NULL);
+
+ALTER TABLE Usuario MODIFY (FechaNacimiento NOT NULL);
+
+ALTER TABLE Usuario ADD (Sexo CHAR(2));
+UPDATE Usuario SET Sexo = 'N';
+ALTER TABLE Usuario MODIFY (Sexo NOT NULL);
+
+ALTER TABLE Usuario ADD (Telefono VARCHAR(20));
+UPDATE Usuario SET Telefono = '5544332211';
+ALTER TABLE Usuario MODIFY (Telefono NOT NULL);
+
+ALTER TABLE Usuario ADD (Celular VARCHAR (20) NULL, CURP VARCHAR(50) NULL);
+
+ALTER TABLE USuario DROP COLUMN Edad;

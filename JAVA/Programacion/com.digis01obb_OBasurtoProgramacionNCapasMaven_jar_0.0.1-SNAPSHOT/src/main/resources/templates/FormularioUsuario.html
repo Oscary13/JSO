@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html lang=”es” xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{layout/MasterPageUsuario}">
+<head>
+    <title>Formulario usuario</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" th:href="@{/main.css}">
+
+
+</head>
+
+<body layout:fragment="main" class="colorBackground">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card">
+                    <div class="card-body">
+
+
+                        <form id="formUsuario" th:action="@{/usuario/form}" method="post" enctype="multipart/form-data"
+                            th:object="${usuarioDireccion}" onkeypress="PrevenirEnvioForm(event)">
+                            <h1 class="card-title text-center" 
+                                th:text="${usuarioDireccion.Usuario.IdUsuario == 0 ? 'AGREGAR NUEVO USUARIO' : 'ACTUALIZAR USUARIO'}" >
+                                USUARIO
+                            </h1>
+                            <br>
+
+                            <input type="hidden" th:field="*{Usuario.IdUsuario}">
+                            <!-- <input type="hidden" th:field="*{Usuario.Imagen}" id="imagenUsuarioBase64" -->
+                                <!-- name="imagenUsuarioBase64"> -->
+                            <div class="row justify-content-center">
+                                <div class="text-center col-md-5">
+                                    <label for="imagen">
+                                        IMAGEN:
+                                    </label>
+                                    <div>
+                                        <input type="file" class="form-control" id="imagenUsuario" name="imagenUsuario"
+                                            onchange="MostrarImagen(this)">
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row text-center">
+
+                                <div class="form-group col-md-12 col-sm-6 mb-3">
+                                    <div class="circulo">
+                                        <img id="mostarImagenUsuario" th:if="${usuarioDireccion.Usuario.Imagen != null}"
+                                            th:src="'data:image/png;base64,'+ ${usuarioDireccion.Usuario.Imagen}">
+                                        <img id="mostarImagenUsuario"
+                                            th:unless="${usuarioDireccion.Usuario.Imagen != null}">
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <hr />
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="nombre">
+                                        NOMBRE:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="nombre"
+                                            placeholder="Ingrese el nombre..." th:field="*{Usuario.Nombre}"
+                                            oninput="EliminarCarecterNoAlfabetico(this)" onblur="EliminarEspacios(this)"
+                                            onkeypress="PressKeyEnter(event, 'apellidoPaterno')">
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="celularlabelError" class="text-danger"
+                                            th:if="${#fields.hasErrors('Usuario.Nombre')}"
+                                            th:errors="*{Usuario.Nombre}"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="apellidoPaterno">
+                                        APELLIDO PATERNO:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="apellidoPaterno"
+                                            placeholder="Ingrese el apellido paterno..."
+                                            th:field="*{Usuario.ApellidoPaterno}"
+                                            oninput="EliminarCarecterNoAlfabetico(this)" onblur="EliminarEspacios(this)"
+                                            onkeypress="PressKeyEnter(event, 'apellidoMaterno')" required>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="apellidoMaterno">
+                                        APELLIDO MATERNO:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="apellidoMaterno"
+                                            placeholder="Ingrese el apellido materno..."
+                                            th:field="*{Usuario.ApellidoMaterno}"
+                                            oninput="EliminarCarecterNoAlfabetico(this)" onblur="EliminarEspacios(this)"
+                                            onkeypress="PressKeyEnter(event, 'curp')" required>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="curp">
+                                        CURP:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-circle"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="curp"
+                                            placeholder="Ingrese el CURP..." th:field="*{Usuario.CURP}"
+                                            onkeypress="PressKeyEnter(event, 'fechaNacimiento')" required
+                                            onblur="ValidarCURP(this)" oninput="UpperCase(this)">
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="curplabelError" class="text-danger" style="visibility: hidden;">CURP
+                                            Invalida :(</label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="fechaNacimiento">
+                                        FECHA DE NACIMIENTO:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-calendar"></i>
+                                        </span>
+                                        <input type="date" max="2006-12-31" class="form-control" id="fechaNacimiento"
+                                            th:field="*{Usuario.FechaNacimiento}"
+                                            onkeypress="PressKeyEnter(event, 'sexoM')" onblur="MayorEdad(this)"
+                                            required>
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="fechaNacimientolabelError" class="text-danger"
+                                            style="visibility: hidden;">Debes ser mayor de edad :(</label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="sexo">
+                                        SEXO:
+                                    </label>
+                                    <div class="input-group">
+                                        <!-- <span class="input-group-text">
+                                            <i class="bi bi-gender-ambiguous"></i>
+                                        </span> -->
+                                        <!-- <select id="sexo" class="form-control">
+                                            <option>Selecciona una opción</option>
+                                            <option value="H">Hombre</option>
+                                            <option value="M">Mujer</option>
+                                        </select> -->
+                                        <div class="form-check ms-5">
+                                            <label class="form-check-label">Masculino</label>
+                                            <input id="sexoM" type="radio" class="form-check-input" value="M "
+                                                name="sexo" th:field="*{Usuario.Sexo}"
+                                                onkeypress="PressKeyEnter(event, 'nombreUsuario')">
+                                        </div>
+
+                                        <div class="form-check ms-5">
+                                            <Label class="form-check-label">Femenino</Label>
+                                            <input id="sexoF" type="radio" value="F " name="sexo"
+                                                class="form-check-input" th:field="*{Usuario.Sexo}">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br />
+                            <hr />
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="nombreUsuario">
+                                        NOMBRE DE USUAIO:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-fill-gear"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="nombreUsuario"
+                                            placeholder="Ingrese el nombre de usuario..." th:field="*{Usuario.UserName}"
+                                            onkeypress="PressKeyEnter(event, 'email')" required
+                                            onblur=" UserNameValidation(this)">
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="nombreUsuariolabelError" class="text-danger"
+                                            style="visibility: hidden;">Nombre de usuario incorrecto</label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="correoElectronico">
+                                        Correo electrónico:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-envelope-at-fill"></i>
+                                        </span>
+                                        <input type="email" class="form-control" id="email"
+                                            placeholder="Ingrese el correo electrónico..." th:field="*{Usuario.Email}"
+                                            onkeypress="PressKeyEnter(event, 'password')" required>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="password">
+                                        Contraseña:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-shield-lock-fill"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="password"
+                                            placeholder="Ingrese la contraseña..." th:field="*{Usuario.Password}"
+                                            onkeypress="PressKeyEnter(event, 'confirmarPassword')" required
+                                            onblur="ValidarPasswordRegex(this)">
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="passwordlabelError" class="text-danger"
+                                            style="visibility: hidden;"></label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="confirmarPassword">
+                                        Confirmar contraseña:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-shield-lock-fill"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="confirmarPassword"
+                                            placeholder="Ingrese la contraseña..."
+                                            onkeypress="PressKeyEnter(event, 'telefono')" required
+                                            onblur="ValidarPassword(this)">
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="confirmarPasswordlabelError" class="text-danger"
+                                            style="visibility: hidden;">La contraseña no coincide</label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="telefono">
+                                        Telefono:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-telephone-fill"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="telefono"
+                                            placeholder="Ingrese el telefono ..." th:field="*{Usuario.Telefono}"
+                                            oninput="EliminarCarecterNoNumerico(this)"
+                                            onblur="ComprobarNumeroTelefonico(this)"
+                                            onkeypress="PressKeyEnter(event, 'celular')" required>
+
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="telefonolabelError" class="text-danger"
+                                            style="visibility: hidden;">Numero
+                                            invalido :(</label>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="celular">
+                                        Celular:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-phone-fill"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="celular"
+                                            placeholder="Ingrese el celular..." th:field="*{Usuario.Celular}"
+                                            oninput="EliminarCarecterNoNumerico(this)"
+                                            onblur="ComprobarNumeroTelefonico(this)"
+                                            onkeypress="PressKeyEnter(event, 'idRol')" required>
+
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="celularlabelError" class="text-danger"
+                                            style="visibility: hidden;">Numero
+                                            invalido :(</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="idRol">
+                                        ROL:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-person-arms-up"></i>
+                                        </span>
+                                        <!-- <input type="text" class="form-control" id="IdRol"
+                                            placeholder="Ingrese el rol ..."
+                                            th:field="*{Usuario.Rol.IdRol}"> -->
+
+                                        <select class="form-select" id="idRol" th:field="*{Usuario.Rol.IdRol}"
+                                            onkeypress="PressKeyEnter(event, 'calle')" required>
+                                            <option value="0" selected>Seleccione un rol</option>
+                                            <option th:each="rol : ${roles}" th:value="${rol.IdRol}"
+                                                th:text="${rol.Nombre}"></option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <br>
+                            <hr>
+                            
+                            <div class="row">
+
+
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="pais">
+                                        Pais:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <select class="form-select" id="idPais"
+                                            th:field="*{Direccion.Colonia.Municipio.Estado.Pais.IdPais}" required>
+                                            <option value="0" selected>Seleccione un pais</option>
+                                            <option th:each="pais : ${paises}" th:value="${pais.IdPais}"
+                                                th:text="${pais.Nombre}"></option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="estado">
+                                        Estado:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <select class="form-select" id="idEstado"
+                                            th:field="*{Direccion.Colonia.Municipio.Estado.IdEstado}" required>
+                                            <option value="0" selected>Seleccione un estado</option>
+                                            <option th:each="estado : ${estados}" th:value="${estado.IdEstado}"
+                                                th:text="${estado.Nombre}"></option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="municipio">
+                                        Municipio:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <select class="form-select" id="idMunicipio"
+                                            th:field="*{Direccion.Colonia.Municipio.IdMunicipio}" required>
+                                            <option value="0" selected>Seleccione un municipio</option>
+                                            <option th:each="municipio : ${municipios}"
+                                                th:value="${municipio.IdMunicipio}" th:text="${municipio.Nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="colonia">
+                                        Colonia:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <select class="form-select" id="idColonia"
+                                            th:field="*{Direccion.Colonia.IdColonia}" required>
+                                            <option value="0" selected>Seleccione una colonia</option>
+                                            <option th:each="colonia : ${colonias}" th:value="${colonia.IdColonia}"
+                                                th:text="${colonia.Nombre}"></option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="calle">
+                                        Calle:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="calle"
+                                            placeholder="Ingrese la calle ..." th:field="*{Direccion.Calle}"
+                                            onkeypress="PressKeyEnter(event, 'numeroInterior')"
+                                            onblur="validarNumerosLetras(this)" oninput="soloLetraNumeros(this)"
+                                            required>
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="callelabelError" class="text-danger"
+                                            style="visibility: hidden;">Formato de calle incorrecto</label>
+                                    </div>
+
+
+                                </div>
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="numeroInterior">
+                                        NUMERO INTERIOR:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="numeroInterior"
+                                            placeholder="Ingrese el numero interior..."
+                                            th:field="*{Direccion.NumeroInterior}"
+                                            onkeypress="PressKeyEnter(event, 'numeroExterior')"
+                                            onblur="validarNumerosLetras(this)" oninput="soloLetraNumeros(this)"
+                                            required>
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="numeroInteriorlabelError" class="text-danger"
+                                            style="visibility: hidden;">Formato de numero interior incorrecto</label>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                
+                                <div class="form-group col-md-4 col-sm-6 mb-3">
+                                    <label for="numeroExterior">
+                                        NUMERO EXTERIOR:
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="bi bi-geo-alt-fill"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="numeroExterior"
+                                            placeholder="Ingrese el numero exterior..."
+                                            th:field="*{Direccion.NumeroExterior}"
+                                            onkeypress="PressKeyEnter(event, 'idColonia')"
+                                            onblur="validarNumerosLetras(this)" oninput="soloLetraNumeros(this)"
+                                            required>
+                                    </div>
+                                    <div class="text-center">
+                                        <label id="numeroExteriorlabelError" class="text-danger"
+                                            style="visibility: hidden;">Formato de numero exterior incorrecto</label>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <br>
+                            <div class="row">
+                                <div class="text-center">
+                                    <button type="submit"
+                                        th:class="${usuarioDireccion.Usuario.IdUsuario == 0 ? 'btn btn-success' : 'btn btn-warning'}"
+                                        th:text="${usuarioDireccion.Usuario.IdUsuario == 0 ? 'GUARDAR' : 'ACTUALIZAR'}"
+                                        onclick="ValidarCampos(event)">Guardar</button>
+                                </div>
+                            </div>
+
+
+                        </form>
+                        <br />
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <br />
+        <br />
+        <br />
+    </div>
+</body>
+<footer>
+
+</footer>
+<script layout:fragment="script">
+
+    var validationNumero = false;
+    var validationEdad = false;
+    var validationCURP = false;
+    var validationUserName = false;
+    var validationPassword = false;
+    var isNumeroCorrecto = false;
+    function EliminarCarecterNoAlfabetico(input) {
+        var cadena = input.value;
+        cadena = cadena.replace(/[^ñÑa-zA-Z\s]/g, '');
+        input.value = cadena;
+    }
+
+    function EliminarCarecterNoNumerico(input) {
+        var cadena = input.value;
+        cadena = cadena.replace(/[^0-9+]/g, '');
+        input.value = cadena;
+    }
+
+    function ComprobarNumeroTelefonico(input) {
+        var regex = /^(\+[0-9]{1,3}\s?)?([0-9]{10})$/;
+        var cadena = input.value;
+        var id = input.id;
+        if (cadena != '') {
+            if (regex.test(cadena)) {
+                document.getElementById(id + "labelError").style.visibility = "hidden";
+                validationNumero = true;
+                return true;
+
+            } else {
+                document.getElementById(id + "labelError").style.visibility = "visible";
+                validationNumero = false;
+                return false;
+            }
+        } else {
+            document.getElementById(id + "labelError").style.visibility = "hidden";
+            validationNumero = false;
+            return false;
+        }
+        
+    }
+
+    function EliminarEspacios(input) {
+        if (input.value != '') {
+            var cadena = input.value.trim().replace(/\s+/g, ' ');
+            input.value = PalabraUpperCase(cadena);
+        }
+    }
+
+    function PalabraUpperCase(cadena) {
+        var palabras = cadena.split(' ');
+        for (let i = 0; i < palabras.length; i++) {
+            palabras[i] = palabras[i][0].toUpperCase() + palabras[i].substring(1).toLowerCase();
+
+        }
+        cadena = palabras.join(' ');
+        return cadena;
+    }
+
+    function PressKeyEnter(event, nexInputId) {
+
+        if (event.key == 'Enter') {
+            document.getElementById(nexInputId).focus();
+            return false;
+        }
+
+    }
+    function PrevenirEnvioForm(event) {
+        if (event.key == 'Enter') {
+            event.preventDefault();
+        }
+
+    }
+
+    function MayorEdad(input) {
+        var fechaNacimientto = new Date(input.value);
+        var id = input.id;
+        var fechaMinima = new Date();
+        fechaMinima.setFullYear(fechaMinima.getFullYear() - 18);
+        if (input.value != '') {
+            if (fechaNacimientto <= fechaMinima) {
+                document.getElementById(id + "labelError").style.visibility = "hidden";
+                validationEdad = true;
+                return true;
+            } else {
+                document.getElementById(id + "labelError").style.visibility = "visible";
+                validationEdad = false;
+                return false;
+            }
+        } else {
+            document.getElementById(id + "labelError").style.visibility = "hidden";
+            return false;
+        }
+
+    }
+
+    function ValidarCampos(event) {
+        var radios = document.getElementsByName('Usuario.Sexo');
+        var sexo = false;
+        for (let i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                sexo = true;
+                break;
+            }
+
+        }
+
+        // if (selecionado == false) {
+        //     alert('Debes seleccionar un sexo');
+        //     event.preventDefault();
+        // }
+        var dato1 = ValidarPasswordRegex(document.getElementById("password"));
+        var dato2 =ValidarPassword(document.getElementById("confirmarPassword"));
+        var dato3 = ComprobarNumeroTelefonico(document.getElementById("celular"));
+        var dato4 = ComprobarNumeroTelefonico(document.getElementById("telefono"));
+        var dato5 = MayorEdad(document.getElementById("fechaNacimiento"));
+        var dato6 = ValidarPassword(document.getElementById("confirmarPassword"));
+        var dato7 = validarNumerosLetras(document.getElementById("calle"));
+        var dato8 = validarNumerosLetras(document.getElementById("numeroInterior"));
+        var dato9 = validarNumerosLetras(document.getElementById("numeroExterior"));
+        var dato11 = UserNameValidation(document.getElementById("nombreUsuario"));
+        var dato111 = ValidarCURP(document.getElementById("curp"));
+        if (ComprobarNumeroTelefonico(document.getElementById("celular")) == false ||ComprobarNumeroTelefonico(document.getElementById("telefono"))== false||MayorEdad(document.getElementById("fechaNacimiento"))==false||ValidarCURP(document.getElementById("curp"))==false||UserNameValidation(document.getElementById("nombreUsuario")) == false ||ValidarPasswordRegex(document.getElementById("password"))==null||validarNumerosLetras(document.getElementById("numeroExterior"))== false||validarNumerosLetras(document.getElementById("numeroInterior"))== false||validarNumerosLetras(document.getElementById("calle"))== false||ValidarPassword(document.getElementById("confirmarPassword"))==false || sexo == false) {
+            alert('¡Tienes campos incorrectos o vacios!  :((');
+            event.preventDefault();
+        }
+        // if (validationEdad == false) {
+        //     alert('Debes ser mayor de edad Bro :(');
+        //     event.preventDefault();
+        // }
+        // if (validationCURP == false) {
+        //     alert('Ingresa una CURP valida');
+        //     event.preventDefault();
+        // } 
+        // if (validationUserName == false) {
+        //     alert('Ingresa una nombre de usuario valido');
+        //     event.preventDefault();
+        // } 
+        // if (validationPassword == false) {
+        //     alert('La contraseña no coincide');
+        //     event.preventDefault();
+        // } 
+
+    }
+
+    function ValidarCURP(input) {
+        var regex = /^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/;
+        var cadena = input.value;
+
+        var id = input.id;
+        if (cadena != '') {
+            if (regex.test(cadena)) {
+                document.getElementById(id + "labelError").style.visibility = "hidden";
+                validationCURP = true;
+                return true;
+            } else {
+                document.getElementById(id + "labelError").style.visibility = "visible";
+                validationCURP = false;
+                return false;
+            }
+        } else {
+            document.getElementById(id + "labelError").style.visibility = "hidden";
+            validationCURP = false;
+            return false;
+        }
+
+    }
+
+    function UpperCase(input) {
+        var upperCase = input.value.toUpperCase();
+        input.value = upperCase;
+
+    }
+
+    function UserNameValidation(input) {
+        var regex = /^[a-zA-Z0-9]+_?[a-zA-Z0-9]+$/;
+        var cadena = input.value;
+
+        var id = input.id;
+        if (cadena != '') {
+            if (regex.test(cadena)) {
+                document.getElementById(id + "labelError").style.visibility = "hidden";
+                validationUserName = true;
+                return true;
+            } else {
+                document.getElementById(id + "labelError").style.visibility = "visible";
+                validationUserName = false;
+                return false;
+            }
+        } else {
+            document.getElementById(id + "labelError").style.visibility = "hidden";
+            validationUserName = false;
+            return false;
+        }
+    }
+
+    function ValidarPassword(input) {
+        var inputPassword = document.getElementById('password').value;
+        var id = input.id;
+        if (inputPassword != input.value) {
+            document.getElementById(id + "labelError").style.visibility = "visible";
+            validationPassword = false;
+            return false;
+            
+        } else {
+            validationPassword = true;
+            document.getElementById(id + "labelError").style.visibility = "hidden";
+            return true;
+        }
+    }
+
+    function MostrarImagen(input) {
+        var mostrarImg = document.getElementById('mostarImagenUsuario');
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                mostrarImg.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+    }
+
+    function ValidarPasswordRegex(input) {
+        var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        var cadena = input.value;
+
+        var id = input.id;
+        var inputpassword = document.getElementById(id + "labelError");
+        if (cadena != '') {
+            if (regex.test(cadena)) {
+                document.getElementById(id + "labelError").style.visibility = "hidden";
+                return true;
+            } else {
+                document.getElementById(id + "labelError").style.visibility = "visible";
+                inputpassword.innerText = "Al menos una letra minúscula, una mayúscula, un dígito, un carácter especial y mayor o igual a 8 caracteres";
+                return false;
+            }
+        } else {
+            document.getElementById(id + "labelError").style.visibility = "hidden";
+            inputpassword.innerText = "";
+            return false;
+
+        }
+
+    }
+
+    function validarNumerosLetras(input) {
+        var regex = /^[a-zA-Z0-9\s]+$/;
+        var cadena = input.value;
+        input.value = input.value.trim();
+        var id = input.id;
+        if (cadena != '') {
+            if (regex.test(cadena)) {
+                document.getElementById(id + "labelError").style.visibility = "hidden";
+                return true;
+            } else {
+                document.getElementById(id + "labelError").style.visibility = "visible";
+                return false;
+            }
+        } else {
+            document.getElementById(id + "labelError").style.visibility = "hidden";
+            return false;
+        }
+
+    }
+
+    function soloLetraNumeros(input) {
+        var cadena = input.value;
+        cadena = cadena.replace(/[^a-zA-Z0-9\s]/g, '');
+        input.value = cadena;
+    }
+
+    $(document).ready(function () {
+        $("#idPais").change(function () {
+            $("#idEstado").empty();
+            $("#idEstado").append('<option value="0" selected>Seleccione un estado</option>');
+            $("#idMunicipio").empty();
+            $("#idMunicipio").append('<option value="0" selected>Seleccione un municipio</option>');
+            $("#idColonia").empty();
+            $("#idColonia").append('<option value="0" selected>Seleccione una colonia</option>');
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8081/estadoapi/getbyidpais",
+                datatype: "json",
+                data: { idPais: document.getElementById('idPais').value },
+                success: function (estados) {
+                    $.each(estados.object, function (i, estado) {
+                        $("#idEstado").append('<option value="' + estado.idEstado + '" >' + estado.nombre + '</option>');
+                    });
+                },
+                error: function(){
+
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $("#idEstado").change(function () {
+            $("#idMunicipio").empty();
+            $("#idMunicipio").append('<option value="0" selected>Seleccione un municipio</option>');
+            $("#idColonia").empty();
+            $("#idColonia").append('<option value="0" selected>Seleccione una colonia</option>');
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8081/municipioapi/getbyidestado",
+                datatype: "json",
+                data: { idEstado: document.getElementById('idEstado').value },
+                success: function (municipios) {
+                    $.each(municipios.object, function (i, municipio) {
+                        $("#idMunicipio").append('<option value="' + municipio.idMunicipio + '">' + municipio.nombre + '</option>');
+                    });
+                },
+                error: function(){
+
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+        $("#idMunicipio").change(function () {
+            $("#idColonia").empty();
+            $("#idColonia").append('<option value="0" selected>Seleccione una colonia</option>');
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8081/coloniaapi/getbyidmunicipio",
+                datatype: "json",
+                data: { idMunicipio: document.getElementById('idMunicipio').value },
+                success: function (colonias) {
+                    $.each(colonias.object, function (i, colonia) {
+                        $("#idColonia").append('<option value="' + colonia.idColonia + '">' + colonia.nombre + '</option>');
+                    });
+                },
+                error: function(){
+
+                }
+            });
+        });
+    });
+
+</script>
+</html>
